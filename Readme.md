@@ -22,7 +22,7 @@ Building other tools (such as fingerprinting a piece of firmware's target with l
 
 :bell: Do not forget to clone with --recurse-submodules
 
-start with `make` in ads2svd 
+:bell: start with `make` in ads2svd 
 
 Launching adarm2.py --help
 
