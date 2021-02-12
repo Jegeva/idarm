@@ -1,7 +1,8 @@
 import cmsis_svd
 from cmsis_svd.parser import SVDParser
-
+import cProfile
 import os
+import sys
 import time
 import glob
 import pprint
@@ -23,7 +24,9 @@ class HexPrettyPrinter(PrettyPrinter):
 
 
 class data:
-    
+
+    verbose = False
+
     def get_segsz_mask(self,sz):
         i=0
         while(sz):
@@ -50,19 +53,37 @@ class data:
         ret[str(lastel[0]) + '-' + str(lastel[1])] = lastel
         return ret
 
+
+    def set_verbose(v):
+        data.verbose = v
+
     def dump_data(self):
-        pp = HexPrettyPrinter()
-        pp.pprint(  self.data_top_hash)
+        if(data.verbose):
+            pp = HexPrettyPrinter()
+            pp.pprint(  self.data_top_hash)
 
 
 
     def parse_chip_svd(self,chip,parser):
        
-        data= {}
+
         segments = {}
         peripherals = {}
        
-        
+        chip["cpu"] = parser.get_device().cpu.name
+        if(chip["cpu"] != None):
+            if(chip["cpu"].lower().find("cortex-") ==0):
+                chip["cpu"] = chip["cpu"][7:]
+            if(chip["cpu"].lower().find("cm") ==0):
+                chip["cpu"] = chip["cpu"][1:]
+            if(chip["cpu"][-1:] == "P"):
+                chip["cpu"] = chip["cpu"][:-1] + "+"
+            if(chip["cpu"][-4:] .lower()== "plus"):
+                chip["cpu"] = chip["cpu"][:-4] + "+"
+
+        if(data.verbose):
+            print(chip["cpu"])
+
         for peripheral in parser.get_device().peripherals:
             #print("0x%08x %s" %( peripheral.base_address,peripheral.name))
             regs = None
@@ -79,7 +100,17 @@ class data:
             if(regs):
                 for r in  regs:
                     reg = {}
-                    reg["name"] = r.name
+                    if(r.name[:len(peripheral.name)+1]) == (peripheral.name+"_"):
+                        reg["name"] = r.name[len(peripheral.name)+1:]
+                    else:
+                        reg["name"] = r.name
+
+                    reg["name"] = reg["name"].replace("[","_")
+                    reg["name"] = reg["name"].replace("]","_")
+                    if(r.size):
+                        reg["size"] = int(r.size)
+                    else:
+                        reg["size"] = 32
                     reg["addr"] = peripheral.base_address + r.address_offset
                     reg["offset"] = r.address_offset
                     if(r.reset_value != None and r.reset_mask != None):
@@ -89,7 +120,35 @@ class data:
                             reg["initval"] = r.reset_value
                         else:
                             reg["initval"] = 0
+                    reg["fields"] = {}
                     peripherals[ peripheral.base_address  ]["registers"][ reg["addr"] ] = reg
+                    if r.fields :
+                        for b in r.fields:
+                            reg["fields"][ b.name ] = {}
+                            reg["fields"][ b.name ]["bito"] = int(b.bit_offset);
+                            reg["fields"][ b.name ]["bitw"] = int(b.bit_width);
+                            reg["fields"][ b.name ]["desc"] = b.description;
+                            reg["fields"][ b.name ]["access"] = 3
+                            reg["fields"][ b.name ]["enums"] = {}
+                            if(b.access):
+                                if(b.access=="read-only"):
+                                    reg["fields"][ b.name ]["acces"] = 1
+                                if(b.access=="write-only"):
+                                    reg["fields"][ b.name ]["acces"] = 2
+                            if(b.enumerated_values):
+                                for e in b.enumerated_values:
+                                    reg["fields"][ b.name ]["enums"][e.name] = {}
+                                    reg["fields"][ b.name ]["enums"][e.name]["name"] = e.name;
+                                    if(e.value):
+                                        reg["fields"][ b.name ]["enums"][e.name]["value"] = int(e.value);
+                                    else:
+                                        reg["fields"][ b.name ]["enums"][e.name]["value"] = 0;
+                                    reg["fields"][ b.name ]["enums"][e.name]["desc"] = e.description;
+
+
+
+
+
         chip["segments"]=self.compress_contiguous_segments(segments,self.segsz)
         chip["peripherals"]=peripherals
 
@@ -97,18 +156,25 @@ class data:
         if core == None:
             for f in sorted(glob.glob(os.path.join(core_svd_datapath,'*.svd'))):
                 c=f.split(os.path.sep)[-1][:-4]
+                if(c.lower().find("cortex-") ==0):
+                    c = c[7:]
+                if(c.lower().find("CM") ==0):
+                    c = c[1:]
                 print(f,"\t",c)
                 self.data_top_hash["cores"][c]= {}
                 self.data_top_hash["cores"][c]["file"]= f
                 self.data_top_hash["cores"][c]["dirty"]= True
         else:
             f = os.path.join(core_svd_datapath,core) + ".svd"
+            if(core.lower().find("cortex-") > -1):
+                core = core[7:]
+
             self.data_top_hash["cores"][core]= {}
             self.data_top_hash["cores"][core]["file"]= f
             self.data_top_hash["cores"][core]["dirty"]= True
 
         for c in self.data_top_hash["cores"].keys():
-            print("---------->",core_svd_datapath ,c + '.svd')
+            #print("---------->",core_svd_datapath ,c + '.svd')
             self.parse_chip_svd(self.data_top_hash["cores"][c],SVDParser.for_xml_file( self.data_top_hash["cores"][c]["file"]))
 
 
@@ -142,18 +208,19 @@ class data:
                 print(v,c)
                 self.parse_chip_svd(self.data_top_hash["vendors"][v][c],SVDParser.for_packaged_svd(v, c + '.svd'))
     
-    def __init__(self, data_from,db_path,core_svd_datapath,cmsis_svd_datapath,segment_size,vendor,core,chip):
+    def __init__(self, data_from,db_path,core_svd_datapath,cmsis_svd_datapath,segment_size,vendor,core,chip,nodesc):
         self.data_top_hash = {}
         self.data_top_hash["vendors"] = {}
         self.data_top_hash["cores"] = {}
         self.persistance = persistance(db_path,cmsis_svd_datapath,segment_size)
         self.segsz = segment_size
         self.segment_mask = self.get_segsz_mask(self.segsz)
-        print("P",cmsis_svd_datapath, core_svd_datapath)
+        #print("P",cmsis_svd_datapath, core_svd_datapath)
         if data_from == None :
             self.core_data_from_svd(core_svd_datapath,segment_size,core)
+  #          self.dump_data()
             self.data_from_svd(cmsis_svd_datapath,segment_size,vendor,chip)               
-            self.persistance.persist(self.data_top_hash)
+            self.persistance.persist(self.data_top_hash,nodesc)
         else:
             if(data_from == "db"):
                 if(vendor == None):
