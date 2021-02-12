@@ -1,3 +1,6 @@
 [submodule "cmsis-svd"]
 	path = cmsis-svd
 	url = git@github.com:Jegeva/cmsis-svd.git
+[submodule "ads2svd"]
+	path = ads2svd
+	url = https://github.com/Jegeva/ads2svd
