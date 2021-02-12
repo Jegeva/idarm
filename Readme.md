@@ -71,8 +71,8 @@ with the textual descriptions    (~900MB): https://github.com/Jegeva/idarm-resul
 
 
 The datasources that are used are :
-- cmsis-svd (for parsing the svd xml files) for the microcontroller vendor information
-- ads2svd : cleans ARM devellopment studio companion xml files and transforms them to svd for the core peripherals information
+- cmsis-svd (https://github.com/Jegeva/cmsis-svd) for parsing the svd xml files with the vendor information
+- ads2svd (https://github.com/Jegeva/ads2svd/) : cleans ARM devellopment studio companion xml files and transforms them to svd for the core peripherals information
 
 This is released under Apache license : https://www.apache.org/licenses/LICENSE-2.0
 
