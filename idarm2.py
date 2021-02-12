@@ -36,7 +36,6 @@ def main():
 
     #default 1    Meg
     parser.add_argument('-m', '--max-segment-sz',   type=str    , help='max segment size (fallback to db, then 0x%08x) if you need that for some reason' % (int(base_sz_default,0)))
-    parser.add_argument('--max-segment-sz-int',   type=int, help='chip model', default=0)
     parser.add_argument('-d', '--database', type=str, default='./db.sqlite3')
     parser.add_argument('-D', '--dump', default=False, action='store_true')
     parser.add_argument('-r', '--rebuild-database', default=False, action='store_true')

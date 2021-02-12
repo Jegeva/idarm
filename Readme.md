@@ -40,8 +40,6 @@ optional arguments:
   -C CORE, --core CORE  a specific core
   -m MAX_SEGMENT_SZ, --max-segment-sz MAX_SEGMENT_SZ
                         max segment size (fallback to db, then 0x00001000) if you need that for some reason
-  --max-segment-sz-int MAX_SEGMENT_SZ_INT
-                        chip model
   -d DATABASE, --database DATABASE
   -D, --dump
   -r, --rebuild-database
