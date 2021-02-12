@@ -1,4 +1,5 @@
 #! /usr/bin/env python3
+# copyright : jean-georges valle 2020
 import argparse
 import inspect
 import os

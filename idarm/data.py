@@ -1,3 +1,4 @@
+# copyright : jean-georges valle 2020
 import cmsis_svd
 from cmsis_svd.parser import SVDParser
 import cProfile

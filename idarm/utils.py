@@ -1,3 +1,4 @@
+# copyright : jean-georges valle 2020
 class utils:
     def __init__(self):
         pass

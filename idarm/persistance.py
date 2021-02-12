@@ -1,3 +1,4 @@
+# copyright : jean-georges valle 2020
 from .utils import utils
 import os
 import sqlite3
