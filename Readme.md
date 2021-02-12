@@ -12,7 +12,7 @@ microcontroller firmware.
 
 Building other tools (such as fingerprinting a piece of firmware's target with libcapstone based on the used peripherals and libcapstone) should be much easier.
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/GHS-pictogram-exclam.svg" width="3em" height="3em"> Do not forget to clone with --recurse-submodules
+<img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/GHS-pictogram-exclam.svg" width="30em" height="30em"> Do not forget to clone with --recurse-submodules
 
 
 The datasources that are used are :
