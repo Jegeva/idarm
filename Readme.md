@@ -16,7 +16,7 @@ This is a loader module for ghidra that tags all the registers,
 flags and declares registers as structures to help with reverse engineering
 microcontroller firmware.
 
-Building other tools (such as fingerprinting a piece of firmware's target with libcapstone based on the used peripherals and libcapstone) should be much easier.
+Building other tools (such as fingerprinting a piece of firmware's target with libcapstone based on the used peripherals) should be much easier.
 
 ## building the database 
 

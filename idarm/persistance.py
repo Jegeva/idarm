@@ -236,13 +236,17 @@ class persistance:
                         chipid=rows[0][0]
                         cur.execute("delete from registers where id in (select rid from  peripheral_registers,chip_peripherals where chip_peripherals.cid=%d and chip_peripherals.pid= peripheral_registers.pid)" % (chipid))
                         cur.execute("delete from peripherals where id in (select pid from  chip_peripherals where chip_peripherals.cid=%d)" % (chipid))
+
                         cur.execute("delete from chips where id =%d" % (chipid))
 
+
+                    cur.execute("insert into chips values(%d,'%s',%d)" % (chipid,c,vendid))
                     if(th["vendors"][v][c]["cpu"] != None):
-                        print("inserting",c,th["vendors"][v][c]["cpu"])
+                        #print("inserting",c,th["vendors"][v][c]["cpu"],th["cores"][ th["vendors"][v][c]["cpu"]  ]["dbid"])
+
                         cur.execute("insert into core_chips values(%d,%d)" % (th["cores"][ th["vendors"][v][c]["cpu"]  ]["dbid"],chipid))
                     else:
-                        print("missing core ",c)
+                        #print("correcting missing core ",c)
                         if(c in chip_by_name_missing_core ):
                             chip_by_name_missing_core[c].append(chipid)
                         else:
@@ -250,16 +254,20 @@ class persistance:
 
 
                     #print("insert into chips values(%d,'%s',%d)" % (chipid,c,vendid))    
-                    cur.execute("insert into chips values(%d,'%s',%d)" % (chipid,c,vendid))
+
 
                     #print(th["vendors"][v][c]["peripherals"])
                     for s in th["vendors"][v][c]["segments"].keys():
                         cur.execute("insert into segments values(%d,%d,%d)" % ( segid,th["vendors"][v][c]["segments"][s][0],th["vendors"][v][c]["segments"][s][1]))
-                        cur.execute("insert into chip_segments values(%d,%d)" % ( segid,chipid))
+                        try:
+                            cur.execute("insert into chip_segments values(%d,%d)" % ( segid,chipid))
+                        except :
+                            print("!!!!!!!! insert into chip_segments values(%d,%d)" % ( segid,chipid))
+
                         segid+=1
                         
 
-                    cur.execute("insert into chip_segments values(%d,%d)" % ( segid,chipid))
+                    #cur.execute("insert into chip_segments values(%d,%d)" % ( segid,chipid))
 
                     for p in th["vendors"][v][c]["peripherals"].keys():
                         cur.execute("insert into peripherals values('%s',%d,%d)" % (th["vendors"][v][c]["peripherals"][p]["name"],perid,p))
@@ -316,7 +324,7 @@ class persistance:
             csvreader = csv.reader(csvfile)
             for row in csvreader:
                 if row[0] in chip_by_name_missing_core:
-                    print("correcting ", row[0]                        )
+                    #print("correcting ", row[0]                        )
                     for chid in chip_by_name_missing_core[row[0]]:
                         if( row[1] in th["cores"]):
                             #print("insert into core_chips values(%d,%d)" % (th["cores"][row[1]]["dbid"],chid))
