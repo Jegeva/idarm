@@ -11,7 +11,7 @@ flags and declares registers as structures t ohelp with reverse engineering
 microcontroller firmware.
 
 Building other tools (such as fingerprinting a piece of firmware's target with libcapstone based on the used peripherals and libcapstone) should be much easier.
-<div border="1px">
+<div border="thin dotted red">
 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/GHS-pictogram-exclam.svg" width="30em" height="30em"> Do not forget to clone with --recurse-submodules
 </div>
 
