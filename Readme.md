@@ -50,13 +50,30 @@ optional arguments:
   -V, --verbose
 ```
 
-your are probably interested in :
+if you want to build the database to use in your own tool or in the ghidra loader, your are probably interested in :
 ```console
 ./idarm2.py -r -N
 ```
+
+## using the database
+
+Since i am no database expert, i went for stupid normal 3NF (uni... it does... things... to you...)
+
+The schema can be found here : https://github.com/Jegeva/idarm/blob/master/bd.sql
+
+## Bruh, I'm just here for the database
+
+The resulting dbs can be found :
+
+without the textual descriptions (~600MB): https://github.com/Jegeva/idarm-resultdb-nodescription
+
+with the textual descriptions    (~900MB): https://github.com/Jegeva/idarm-resultdb-withdescription
+
 
 The datasources that are used are :
 - cmsis-svd (for parsing the svd xml files) for the microcontroller vendor information
 - ads2svd : cleans ARM devellopment studio companion xml files and transforms them to svd for the core peripherals information
 
 This is released under Apache license : https://www.apache.org/licenses/LICENSE-2.0
+
+
