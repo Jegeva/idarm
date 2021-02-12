@@ -11,9 +11,10 @@ flags and declares registers as structures t ohelp with reverse engineering
 microcontroller firmware.
 
 Building other tools (such as fingerprinting a piece of firmware's target with libcapstone based on the used peripherals and libcapstone) should be much easier.
-<div>
+<div text-align="center">
 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/GHS-pictogram-exclam.svg" width="30em" height="30em"> Do not forget to clone with --recurse-submodules
 </div>
+
 
 The datasources that are used are :
 - cmsis-svd (for parsing the svd xml files) for the microcontroller vendor information
