@@ -10,7 +10,7 @@ Or do stuff to/with them bits of expensive sand :tongue:...
 
 ## What do i do this this anyways ?
 
-An exemple tool built on the IDARM database can be found here : https://github.com/Jegeva/ghidraloader
+An exemple tool built on the IDARM database can be found here : https://github.com/Jegeva/ghidrARMloader
 
 This is a loader module for ghidra that tags all the registers,
 flags and declares registers as structures to help with reverse engineering
