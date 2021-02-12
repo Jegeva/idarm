@@ -8,7 +8,7 @@ In by itself this is not a real tool but actually something for other tools to b
 It used to be something i build for IDA but i got frustrated with her... guess you can IDentify ARM chips with that now...
 Or do stuff to/with them bits of expensive sand :tongue:...
 
-## What do i do this this anyways ?
+## What do i do with this anyways ?
 
 An exemple tool built on the IDARM database can be found here : https://github.com/Jegeva/ghidrARMloader
 
